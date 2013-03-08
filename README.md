@@ -82,6 +82,58 @@ Some ideas for features:
 	* LEDs with different color: red, green blue.
 	* A LED in which one can mix colors
 	* Holding down a button affects frequence of LED blinking. Or a potmeter.
+	
+Automatic DVD changer and burner
+--------------------------------
+I have a whole bunch of DVDs I want to make copies of but I do not want to sit and manually change the DVDs. Commercial DVD changers are very expensive. My idea is to use vacume suction to lift the DVDs up. I am thinking of two possible solutions to this:
+
+	1. Building a machine in Fischertechnik and controll it with my Arduino ROBO Controller.
+	2. A solution based on Lynxmotion servo erector sets controlled by a BotBoarduino.
+	
+There are obviously pros and cons of both solutions. Fischertechnik is more suited for making machines in general while [Lynxmotion][lynx] is more geared towards robots. The Fischertechnik solution will allow for making movements which are not easily supported with the lynxmotion kits, like going straight up and down. However [Lynxmotion][lynx] based robot arms could do the same using inverse kinamatics, even though the programming would be more complicated. The advantage over Fischertechnik would be that they are much more sturdy and durable.
+
+The [BotBoarduino][botdino] is described [here][botdino]. You can buy it at [electrokit][botdinobuy].
+
+Experimentation projects
+========================
+To actually realize the projects described it is usefull to create simpler projects to figure out how key parts of the whole project works.
+
+ATtiny13 programmer board
+-------------------------
+Although we have a AVR-ISP500 programmer from Olimex, it is akward to connect it to the pins of the tiny13 each time. We should create a board with an IC socket for putting it in. The board should be general purpose for trying out different programming. Here are the steps.
+
+	1. Design it on a breadboard.
+	2. Create a voltage regulator. Input 9V, output 5V. See sparkfun beginning embedded electronics:
+		* LM7805 regulator
+		* 100uF Capacitor
+		* 10uF Capacitor
+		* red LED + 330Ohm resistor
+		* diode	
+	3. Add a tiny13 with a yellow LED to test it. Connect the cables for ISP:
+		* clock
+		* serial in
+		* serial out
+	4. Make it blink with simple program.
+	5. Add a second green LED. Make sure both are on connected to pin 5 and 6, since those support PMW.
+	6. Test PWM with different programs.
+	7. Add two push buttons to inputs, through a pull up resistor or voltage divider.
+	8. Experiment with program for changing PWM frequence based on how long buttons are pressed.
+	9. Add a potmeter to pin 3, since that has a ADC and few other functions. Use voltage divider.
+	
+We need to find out if any of these addons can interfere with ISP. Does programmer need to be disconnected when the chip is running its program etc. So to sum  up we should have:
+
+	* 3 LEDs
+		* Red power is on
+		* Yellow and green PWM output (pin 5 and 6)
+	* 2 Push buttons connected to inputs (pin 2 and 7)
+	* 1 Potmeter connected to ADC input (pin 3)
+	
+We should check if interrupts can be triggered on all inputs. If all works fine, then we know this can serve as the basis for a board to program and test tiny13 chips. But before that we should test if the programming board can double as a "fun buttons toy". We should put in a switch so that one can chose whether to output to LED or speaker. The speaker should be used to make fun sounds. Then the board could triple as the "come find me toy".
+
+Before building the programmer we should check whether it can also be used for experimenting with sensors for measuring revolutions on toy motors. Is is possible to input this without removing the two push buttons? 
 
 [motodriver]: http://www.electrokit.com/motordrivare-l298-dubbel-hbrygga.49762 "Dual  full-bridge motor driver"
 [electrokit]: http://www.electrokit.com "Electro:kit"
+[botdino]: http://www.lynxmotion.com/c-153-botboarduino.aspx
+[botdinobuy]: http://www.electrokit.com/en/botboarduino.50217
+[lynx]: http://www.lynxmotion.com
