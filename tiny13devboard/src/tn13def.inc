@@ -41,17 +41,17 @@
 #define _TN13DEF_INC_
 
 
-#pragma partinc 0
+;#pragma partinc 0
 
 ; ***** SPECIFY DEVICE ***************************************************
 .device ATtiny13
-#pragma AVRPART ADMIN PART_NAME ATtiny13
+;#pragma AVRPART ADMIN PART_NAME ATtiny13
 .equ	SIGNATURE_000	= 0x1e
 .equ	SIGNATURE_001	= 0x90
 .equ	SIGNATURE_002	= 0x07
 
-#pragma AVRPART CORE CORE_VERSION V2
-#pragma AVRPART CORE NEW_INSTRUCTIONS lpm rd,z+
+;#pragma AVRPART CORE CORE_VERSION V2
+;#pragma AVRPART CORE NEW_INSTRUCTIONS lpm rd,z+
 
 
 ; ***** I/O REGISTER DEFINITIONS *****************************************
@@ -438,10 +438,10 @@
 .equ	E2END	= 0x003f
 .equ	EEPROMEND	= 0x003f
 .equ	EEADRBITS	= 6
-#pragma AVRPART MEMORY PROG_FLASH 1024
-#pragma AVRPART MEMORY EEPROM 64
-#pragma AVRPART MEMORY INT_SRAM SIZE 64
-#pragma AVRPART MEMORY INT_SRAM START_ADDR 0x60
+;#pragma AVRPART MEMORY PROG_FLASH 1024
+;#pragma AVRPART MEMORY EEPROM 64
+;#pragma AVRPART MEMORY INT_SRAM SIZE 64
+;#pragma AVRPART MEMORY INT_SRAM START_ADDR 0x60
 
 
 
