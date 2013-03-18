@@ -54,4 +54,20 @@ By accident I noticed when reading some docs that it said that when you use inte
 3. We return successfully from it. I found that out by setting a register in it and checking whether it had been set in main loop.
 4. The interrupt never gets triggered a second time. 
 
+Monday morning march 18, 2013
+-----------------------------
+Finnaly my output compare code using interrupts works. My mistake was to turn on CTC mode. This is only used when automatically toggling output to go HIGH or LOW when TCNT0 equals OCR0A or OCR0B. So by just removing this line setting the CTC flag in TCCR0A everything worked fine.
+
+Next step was automatic wave form generation using CTC (set TCNT0 to 0 when TCNT0 == OCR0A). In english that means making the LED blink automatically without using any interrupt or polling. My first mistake here was thinking that the two registers OCR0A and OCR0B which get compared to timer/counter TCNT0 every clock cycle were completely symetrical. They are NOT. You can only use OCR0A to set the frequency of the LED blinking. Page 72 of the attiny13 datasheet shows how the WGM0..2 in TCCR0A and TCCR0B are used to set when the TCNT0 counter will be cleared. When bit WGM01 is set it will be cleared when TCNT0 == OCR0A. But there is no option for when it is equal to OCR0B. Keep that in mind!
+
+COM0A1, COM0A0, COM0B1, COM0B0 bits in TCCR0A register are symetrical on the other hand. If you have set COM0A0..1 bits, then the OC0A pin will be toggled or set when TCNT0 == OCR0A. Likewise pin OC0B will be toggled when TCNT0 == OCR0B if the COM0B0..1 bits have been set.
+
+So really it is only OCR0A which lets you set the frequence of the wave. But OCR0B lets you control the phase of the other output. So if you have two LEDs one connected to OC0A and one to OC0B. If OCR0A == OCR0B then they will blink in phase. But if they are different they will blink out of phase.
+
+Monday evening march 18, 2013
+-----------------------------
+So I figured out I was slightly wrong about why my timer output compare program didn't work. It was not because I had turned on CTC. It only made it fail indirectly. When turning on CTC, TCNT0 will reset every time TCNT0 == OCR0A, and OCR0A would probably be at 0. So when TCNT0 gets reset it gets the same value as OCR0. That sounds like trouble. And the result is that the interrupt only triggers once.
+
+So the actual problem was that I did not set a value for OCR0A. It is okay to set a value for OCR0B but that only affects the phase.
+
 [resitorhowto]: http://www.instructables.com/id/Draw-Electronic-Schematics-with-CadSoft-EAGLE/step5/Add-resistors/

@@ -45,12 +45,16 @@ on_reset:
 	out TCCR0B, a
 	
 	;LED frequence F_CPU/(2 * 1024 * 128)
-	ldi a, 250
-	out OCR0B, a
+	ldi a, 128
+	out OCR0A, a
 	
 	;turn on interrupt for compare match
 	ldi a, 1<<OCIE0B
 	out TIMSK0, a
+	
+	;turn on CTC mode (TCNT0 == OCR0A)
+	ldi a, 1<<WGM01
+	out TCCR0A, a
 	
 	sei		;Interrupts turned on globally
 	
