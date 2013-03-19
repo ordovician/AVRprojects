@@ -1,4 +1,4 @@
-; Connect a potentiometer to PB4 to adjust frequency of LED blinking
+; Connect a potentiometer to PB4 (pin 4) to adjust frequency of LED blinking on PB0 (pin 5)
 ; Uses ADC and waveform generator
 .include "tn13def.inc"
 

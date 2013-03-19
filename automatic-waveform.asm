@@ -1,4 +1,5 @@
 ; Blink LED automatically using hardware. Not interrupt or polling loop
+; Connect LED to PB0 (pin 5)
 .include "tn13def.inc"
 
 .def a = r16
