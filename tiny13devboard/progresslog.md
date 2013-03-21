@@ -70,4 +70,24 @@ So I figured out I was slightly wrong about why my timer output compare program 
 
 So the actual problem was that I did not set a value for OCR0A. It is okay to set a value for OCR0B but that only affects the phase.
 
+Thursday march 21, 2013
+-----------------------
+So it seems I have LED blinking under control. Button pressing has proved more complicated however. The issue is debouncing. Meaning when you press a mechanical button it actually bounces up and down for a few milliseconds. To little for you to notice, but your MCU (Microcontroller unit) will. It will look like the button gets toggled multiple times. You can fix this by adding capacitors, resitors etc on the input. Or you can write code to figure out when the button is done bouncing.
+
+Fortunatly I did not need to check for debouncing because I just want to increase or decrease the speed of the LED blinking depending on how long the increase speed, or decrease speed buttons are held down.
+
+The problem I ran into this time was poor understanding on my part of issues surrounding signed and unsigned math and assembly instructions. So here is the issue: The blinking speed is determined by a number between 0 - 255 stored in IO port OCR0A. The number indicates timer counts between each LED toggle. So a low number means high blinking frequency. But if it is too low, the LED will blink so fast you can not see it. It will then act as a dimmer. Each number corresponds roughtly to 1ms. 30ms is roughly the minimum. At lower value we can't see the blinking.
+
+We loop indefinitly checking whether the button is down for a whole 60ms at a time. If it is we increase or decrease the OCR0A by 3 depending on which button is pressed. Doing this there is a number of checks when decreasing the speed to not go below 30ms waiting time between LED toggles.
+
+I used BRLT (branch if less than) instead of BRLO (branch if lower) since I thought signed meant that it would handle cases where the end result was negative. It turns out BRLO already does that. The problem with BRLT is that it treats the operands of previous comparisons as signed numbers. So instead of OCR0A having a range of 0 - 255, it gets a range from -128 to 127. So values from 128 and above a treated as smaller than values below 128. That gives odd results.
+
+Second mistake was thinking that BRMI (branch if minus) only kicked in when a big number was subrtracted from a small. In fact it is much simpler. If the result has bit 8 (MSB) set then BRMI will branch. So it treats all results as signed numbers, and thus anything above 127 will be treated as negative and cause a branch. Thus one must use BRLO for unsigned numbers.
+
+Summary:
+
+1. BRLO instead of BRLT
+2. BRSH instead of BRGE
+3. BRLO instead of BRMI 
+
 [resitorhowto]: http://www.instructables.com/id/Draw-Electronic-Schematics-with-CadSoft-EAGLE/step5/Add-resistors/
