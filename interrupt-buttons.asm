@@ -75,50 +75,20 @@ Reset:
 loop:
 	sleep	
 	nop
-	;go to sleep again if button was not pressed down
-	andi btnstat, 1<<PB2 | 1<<PB3
-	breq loop
-	sbi PORTB, PB1 
-	
-wait:
-	in t1, TCNT0
-	sub t1, t0
-	cpi t1, 10	;check if 10 * 0.8ms have passed. Debounce
-	brge debounced
-	rjmp wait
-	
-debounced:
-cbi PORTB, PB1
-	in a, PINB
-	com a
-	and a, btnstat
-	sbrc a, PB2
-	rcall button2_down
-	sbrc a, PB3
-	rcall button3_down	
 	rjmp loop
 	
-button2_down:
-	in a, OCR0A
-	ldi b, 10
-	add a, b
-	out OCR0A, a
-	ret
-
-button3_down:
-	in a, OCR0A
-	subi a, 10
-	out OCR0A, a
-	ret
 
 ButtonToggle:
 	in rsreg, SREG
 	
 	;get current buttons state
-	in btnstat, PINB
-	com btnstat						;we want 1 to represent button down
-	andi btnstat, 1<<PB2 | 1<<PB3	;remove non button related bits
-	in t0, TCNT0					;time button was changed
+	in a, PINB
+	com a					;we want 1 to represent button down
+	andi a, 1<<PB2 | 1<<PB3	;remove non button related bits
+	mov b, a
+	and b, btnstat
+
+	in t0, TCNT0			;time button was changed
 
 button_done:	
 	out SREG, rsreg

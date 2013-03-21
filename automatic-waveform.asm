@@ -14,7 +14,7 @@ Reset:
 	cbi PORTB, PB0	;turn off LED
 	cbi PORTB, PB1
 	
-	;set prescaler to divide clock freq by 1024
+	;set prescaler to divide clock freq by 1024. Each count is about 0.8ms at 1.2MHz
 	ldi a, 1<<CS02 | 1<<CS00
 	out TCCR0B, a
 	

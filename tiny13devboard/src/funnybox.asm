@@ -30,7 +30,6 @@
 	reti				;ADC conversion complete
 	
 on_reset:
-	; TODO erik try this commented out lines. Interrupts require a stack which you forgot
 	ldi	a, LOW(RAMEND)
 	out	SPL, a
 
@@ -52,9 +51,9 @@ on_reset:
 	
 	;clear Timer on Compare Match (CTC) and set OC0A (in TIFR0)
 	;ldi a, 1<<WGM01 | 1<<COM0B1 | 1<<COM0B0
-	ldi a, 1<<WGM01
-	
-	out TCCR0A, a
+	; ldi a, 1<<WGM01
+	; 
+	; out TCCR0A, a
 	
 	;turn on interrupt for compare match
 	ldi a, 1<<OCIE0B
