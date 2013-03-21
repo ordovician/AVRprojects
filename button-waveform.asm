@@ -1,20 +1,21 @@
-; Blink LED automatically using hardware. Not interrupt or polling loop. Increase or decrease blink frequency
-; by holding down buttons
+; Blink LED automatically using hardware. No interrupt or polling loop. 
+; Hold down button connected to PB2 to decrease blink frequency
+; Hold down PB3 increase blink frequency
 ; Connect LED to PB0 (pin 5)
 ; Connect buttons to PB2 and PB2 (pin 7 and 2)
 .include "tn13def.inc"
 
-.define STEP 3
-.define WAIT 60
-.define SMALLEST 30
+.define STEP 3			;How big the steps in increase/decrease of LED frequency is
+.define WAIT 60			;Wait before sampling button state
+.define SMALLEST 30		;Lowest time between LED toggle.
 .define HIGHEST 255
 
-.def a = r16
+.def a = r16	;general purpose accumulator
 .def b = r21
-.def b0 = r17
-.def b1 = r18
+.def b0 = r17	;previous button state
+.def b1 = r18	;current button state
 
-.def n = r19
+.def n = r19	;counters
 .def m = r20
 
 .org 0000
@@ -73,19 +74,16 @@ decspeed_done:
 	ret
 
 IncSpeed:
-	;in a, OCR0A
-	ldi a, 128+STEP
-	cpi a, SMALLEST+1
-	brlo toosmall	
-	subi a, STEP
-	brlo toosmall
-	sbi PINB, PB1
-	
-	cpi a, SMALLEST
-	brsh incspeed_done	
-toosmall:
+	in a, OCR0A
+	;will OCR0A get smaller than allowed value if we reduce it by STEP?
+	cpi a, SMALLEST+STEP	
+	brsh high_enough
 	ldi a, SMALLEST
-incspeed_done:
+	out OCR0A, a
+	ret
+
+high_enough:
+	subi a, STEP
 	out OCR0A, a
 	ret
 	

@@ -89,5 +89,5 @@ Summary:
 1. BRLO instead of BRLT
 2. BRSH instead of BRGE
 3. BRLO instead of BRMI 
-
+4. I Thought BRSH meant higher than. But it is higher or equal. (Branch Same or Higher)
 [resitorhowto]: http://www.instructables.com/id/Draw-Electronic-Schematics-with-CadSoft-EAGLE/step5/Add-resistors/
