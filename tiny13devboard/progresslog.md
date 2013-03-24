@@ -90,4 +90,15 @@ Summary:
 2. BRSH instead of BRGE
 3. BRLO instead of BRMI 
 4. I Thought BRSH meant higher than. But it is higher or equal. (Branch Same or Higher)
+
+Friday march 22, 2013
+---------------------
+Got my prototype developer board finnished. It seemed to take the whole day wiring up everything, testing and soldering. No particular problems except I kept forgetting to connect every needed place to GND. E.g. on first test run LEDs did not blink because neither transistor had its emitter connected to GND. Being melticulous thought made it all time consuming.
+
+I started thinking, that making a prober PCB  might take less time despite all the mucking about in Eagle, since it is easier to make sure you connected everything correctly. A prototype board simple becomes a big mess of cables very quickly.
+
+Saturday march 23, 2013
+-----------------------
+Really just watched TED talks and documented my project on the web.
+
 [resitorhowto]: http://www.instructables.com/id/Draw-Electronic-Schematics-with-CadSoft-EAGLE/step5/Add-resistors/
