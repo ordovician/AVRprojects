@@ -101,4 +101,12 @@ Saturday march 23, 2013
 -----------------------
 Really just watched TED talks and documented my project on the web.
 
+Sundary march 24, 2013
+----------------------
+Added two connection points to be able to easily connect a tachometer and electric motor. The tachometer is on a a small electric motor and send a pulses as the disk with slits rotates and alternates between letting through IR to an IR sensor. Thus one can figure out rotation speed by numbere of pulses per second. This worked fine. I wrote a quick program which used an interrupt whenever the input changed and flashed a LED each time. The motor output did not work as well though. When my 9V battery driving the whole circuit attempted to drive the motor in addition the load was so high that the voltage dropped to about 7.3V. It was impossible to connect it through the PWM output sendt through one of my 2N2222 transistors. The LED would stop flashing. But connecting a second LED worked fine, so it seems like the load was to high for this to work properly. I probably have to have another transitor stage.
+
+Monday march  25, 2013
+----------------------
+Not much done because I spent all day watching TED videos and reading about Elon Musk. 
+
 [resitorhowto]: http://www.instructables.com/id/Draw-Electronic-Schematics-with-CadSoft-EAGLE/step5/Add-resistors/

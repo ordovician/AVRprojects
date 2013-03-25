@@ -81,16 +81,8 @@ loop:
 ButtonToggle:
 	in rsreg, SREG
 	
-	;get current buttons state
-	in a, PINB
-	com a					;we want 1 to represent button down
-	andi a, 1<<PB2 | 1<<PB3	;remove non button related bits
-	mov b, a
-	and b, btnstat
-
-	in t0, TCNT0			;time button was changed
-
-button_done:	
+	sbi PINB, PB1
+	
 	out SREG, rsreg
 	reti
 	
