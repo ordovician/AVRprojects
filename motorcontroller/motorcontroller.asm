@@ -19,17 +19,6 @@
 	reti				;watchdog time-out
 	rjmp ADCComplete	;ADC conversion complete
 	
-ON_RESET:
-    SBI DDRB,PB0           ;SET PORTB0 FOR OUTPUT
-    LDI a,0b10000001    ;SET TO PWM MODE 1
-    OUT TCCR0A,A
-    LDI A,0b00000101    ;SET PRESCALER/DIVIDER TO /1024        
-    OUT TCCR0B,A        
-    LDI A,200            ;DIFFERENT VALUE
-	OUT OCR0A,A        ;FOR COMPARE
-
-MAIN_LOOP: RJMP MAIN_LOOP;A DO-NOTHING LOOP
-	
 Reset:
 	ldi a, low(RAMEND)
 	out SPL, a
@@ -47,7 +36,7 @@ Reset:
 	;setup prescaler to 1/1024, and phase correct PWM, with variable duty cycle
 	ldi a, 1<<CS02 | 1<<CS00
 	out TCCR0B, a
-	ldi a, 1<<WGM00 | 1<<COM0A0		;Toggle OC0A on compare match
+	ldi a, 1<<WGM00 | 1<<COM0A1		;Toggle OC0A on compare match
 	out TCCR0A, a
 	
 	ldi a, 128
@@ -56,13 +45,13 @@ Reset:
 	;ADC
 	;ADc ENable, ADc Start Conversion, ADc Auto upDATE, ADc Interrupt Enable
 	; with 50-200KHz, SYS CLOCK IS 1.2MHz 
-	; ldi a, 1<<ADEN | 1<<ADSC | 1<<ADATE | 1<<ADIE | 1<<ADPS1 | 1<<ADPS0
-	; out ADCSRA, a
-	; 
-	; ;Input ADC on pin PB4/ADC2
-	; ldi a, 1<<MUX1
-	; out ADMUX, a
-	; sei	
+	ldi a, 1<<ADEN | 1<<ADSC | 1<<ADATE | 1<<ADIE | 1<<ADPS1 | 1<<ADPS0
+	out ADCSRA, a
+	
+	;Input ADC on pin PB4/ADC2
+	ldi a, 1<<MUX1
+	out ADMUX, a
+	sei	
 
 loop:
 	nop
