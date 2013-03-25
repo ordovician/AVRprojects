@@ -6,6 +6,7 @@
 
 .def a = r16
 .def b = r17
+.def n = r18
 
 .org 0000
 	rjmp Reset			;reset
@@ -60,7 +61,17 @@ loop:
 ADCComplete:
 	in a, ADCL
 	in b, ADCH
-	out OCR0A, a
+	
+	;ADC gives a 10bit value. The two MSBs are in ADCH
+	; we want to compress 10bit value to a 8bit value
+	lsr b	;move 2 bits to the right
+	ror b	;and make them pop up on left side
+	ror b
+	lsr a	;discard two least significant byts
+	lsr a
+	or a, b	;combine ADCH and ADCL in a 8bit value
+	
+	out OCR0A, a	;set duty cycle
 	reti
 
 
