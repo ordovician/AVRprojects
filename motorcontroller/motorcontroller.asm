@@ -1,6 +1,9 @@
-;PWM to control a motor, at 100 Hz. 10ms period.
-;With CPU clock of 1.2e6 and prescaller 1/1024, each clock tick is about 0.8ms
-;That means we have to count to about 12 to get 10ms.
+;Phase correct PWM of a motor on pin PB0
+;page 67 of datasheet says equation for frequency is:
+;fc/(N*510), where fc is clock frequency and N is prescaller (8, 64, 256, 1024).
+;We let the clock frequency be fc = 9.6Mhz, and use prescaller N = 256.
+;Then we get 9.6e6/(256*510) Hz = 73.5 Hz
+;73.5Hz is close to 100Hz which is ideal for motor controll.
 
 .include "tn13def.inc"
 
@@ -34,14 +37,11 @@ Reset:
 	cbi DDRB, PB2	;button to enable configuration of max, min, middle
 	sbi PORTB, PB2	;enable pullup for button
 	
-	;setup prescaler to 1/1024, and phase correct PWM, with variable duty cycle
-	ldi a, 1<<CS02 | 1<<CS00
+	;setup prescaler to 1/256, and phase correct PWM, with variable duty cycle
+	ldi a, 1<<CS02					;1/256 prescaler
 	out TCCR0B, a
-	ldi a, 1<<WGM00 | 1<<COM0A1		;Toggle OC0A on compare match
+	ldi a, 1<<WGM00 | 1<<COM0A1		;Waveform gen mode 1, Toggle OC0A on compare match
 	out TCCR0A, a
-	
-	ldi a, 128
-	out OCR0A, a
 	
 	;ADC
 	;ADc ENable, ADc Start Conversion, ADc Auto upDATE, ADc Interrupt Enable
