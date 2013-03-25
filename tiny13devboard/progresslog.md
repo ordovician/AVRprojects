@@ -107,6 +107,8 @@ Added two connection points to be able to easily connect a tachometer and electr
 
 Monday march  25, 2013
 ----------------------
-Not much done because I spent all day watching TED videos and reading about Elon Musk. 
+Not much done because I spent all day watching TED videos and reading about Elon Musk. Got phase  correct PWM at 73Hz working though which should be ideal for motor controll.
+
+I set COM0A1 and COM0A0 bit in TCCR0A to 01. Which is the correct thing to do in CTC mode. That will toggle pin OC0A on OCR0A match. However I had set WGM02 to 1. Which gave another phase correct PWM which I was supposed to use. The result was a blank LED. But I am not sure why. Perhaps because output would come on OC0B or because that made OC0A get disconnected.
 
 [resitorhowto]: http://www.instructables.com/id/Draw-Electronic-Schematics-with-CadSoft-EAGLE/step5/Add-resistors/
