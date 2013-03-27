@@ -11,6 +11,20 @@
 .def b = r17
 .def n = r18
 
+.def flag = r19
+
+.def midl = r4
+.def midh = r5
+.def rangel = r6
+.def rangeh = r7
+.def beginl = r8
+.def beginh = r9
+.def endl = r10
+.def endh = r11
+
+;position of bits for use with flag register
+.define GO_CCW 0	;bit 0 in flag set to 1 if motor should rotate ccw
+
 .org 0000
 	rjmp Reset			;reset
 	reti				;external interrupt 0
@@ -59,20 +73,63 @@ loop:
 	rjmp loop
 
 ADCComplete:
-	in a, ADCL
-	in b, ADCH
+	in	r24, ADCL		;using r25:r24 because they work with ADWI
+	in	r25, ADCH
+	clr r26
+	cbr flag, 1<<GO_CCW	;assume motor goes clockwise
 	
-	;ADC gives a 10bit value. The two MSBs are in ADCH
-	; we want to compress 10bit value to a 8bit value
-	lsr b	;move 2 bits to the right
-	ror b	;and make them pop up on left side
-	ror b
-	lsr a	;discard two least significant byts
-	lsr a
-	or a, b	;combine ADCH and ADCL in a 8bit value
+	;assume clockwise. range = end - mid
+	mov rangel, endl
+	mov rangeh, endh
+	sub rangel, midl
+	sbc rangeh, midh
+		
+	;dial - mid
+	sub r24, midl
+	sbc r25, midh
+	brsh positive
+	;dialed value is less than our defined middle posision for dial
+	; get how far it is from middle by taking two's compliment
+	com r24
+	com r25
+	adiw r25:r24, 1	;two's complement is one's complement +1
 	
-	out OCR0A, a	;set duty cycle
+	;previous assumption about range wrong. Recalc as range = mid - begin
+	mov rangel, midl
+	mov rangel, midh
+	sub rangel, beginl
+	sbc rangeh, beginh
+	
+	;make a note that dial is left of middle
+	sbr flag, 1<<GO_CCW
+	
+positive:	
+	;abs(dial - mid)*256
+	ldi n, 8
+	rcall ShiftLeft
+	
+	;(abs(dial - mid)*256)/range
+	rcall Divide
+	
+	out OCR0A, n	;set duty cycle
 	reti
 
-
-
+Divide:
+	ldi n, -1
+	clr r4
+divide_loop:
+	inc n				
+	sub r0, rangel
+	sbc r1, rangeh
+	sbc r2, r4
+	brsh divide_loop	;remaineder in r2:r1:r0 still higher than rangeh:rangel
+	ret
+	
+; Shifts r2:r1:r0 left by amount given in n.
+ShiftLeft:
+	lsl r0
+	rol r1
+	rol r2
+	dec n
+	brne ShiftLeft
+	ret
