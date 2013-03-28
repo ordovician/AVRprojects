@@ -50,6 +50,22 @@
 	mov @2, a
 .endm
 
+.macro  EEWriteData
+.message "no parameters specified"
+.endm
+
+;Read a word from EEPROM at given address
+.macro EEWriteData_i_16
+	ldi addr, @0
+	rcall EEErase
+	mov a, @1
+	rcall EEWrite
+	inc addr
+	rcall EEErase
+	mov a, @2
+	rcall EEWrite
+.endm
+
 ;start EEPROM segment (this will be stored in EEPROM memory and must be accessed with through IO registers)
 .eseg
 .org 0x0004
@@ -72,11 +88,11 @@ DialHigh:	.dw 1023	;dial position for full speed cw
 	reti				;watchdog time-out
 	rjmp ADCComplete	;ADC conversion complete
 
-StateSwitch:
-	rjmp StateMotorControl
-	rjmp StateDialLow
-	rjmp StateDialMid
-	rjmp StateDialHigh
+ADCStateSwitch:
+	rjmp ADCMotorControl
+	rjmp ADCDialLow
+	rjmp ADCDialMid
+	rjmp ADCDialHigh
 	
 Reset:
 	ldi a, low(RAMEND)
@@ -108,7 +124,7 @@ loop:
 	rjmp loop
 
 ;if we are doing ADC and we are in Motor controll state, this code should run
-StateMotorControl:
+ADCMotorControl:
 	in	r24, ADCL		;using r25:r24 because they work with ADWI
 	in	r25, ADCH
 	clr r26
@@ -151,17 +167,17 @@ positive:
 	out OCR0A, n	;set duty cycle
 	ret
 	
-StateDialLow:
+ADCDialLow:
 	in dialLowL, ADCL
 	in dialLowH, ADCH
 	ret
 	
-StateDialMid:
+ADCDialMid:
 	in dialMidL, ADCL
 	in dialMidH, ADCH
 	ret
 	
-StateDialHigh:
+ADCDialHigh:
 	in dialHighL, ADCL
 	in dialHighH, ADCH
 	ret
@@ -208,6 +224,11 @@ DebounceTimePassed:
 	cpi state, STATE_LAST	;if we were at the last state, we need to wrap around
 	brne dtp_exit
 	clr state				;go to first state
+	
+	;store values we recorded in EEPROM
+	EEWriteData [DialLow, dialLowH:dialLowL]
+	EEWriteData [DialMid, dialMidH:dialMidL]
+	EEWriteData [DialHigh, dialHighH:dialHighL]
 	
 dtp_exit:	
 	pop a
@@ -265,10 +286,10 @@ ADCComplete:
 	in rsreg, SREG
 	push a
 	
-	;jump to one of the subroutines under Stateswitch
+	;jump to one of the subroutines under ADCStateSwitch
 	; this kind of works like a switch case on state
-	ldi yl, low(StateSwitch)
-	ldi yh, high(StateSwitch)
+	ldi yl, low(ADCStateSwitch)
+	ldi yh, high(ADCStateSwitch)
 	mov a, state
 	lsl a
 	add yl, a
