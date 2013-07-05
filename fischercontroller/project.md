@@ -38,6 +38,21 @@ So my current plan is build the next version using:
 	
 I am buying my [motor driver modules][motodriver] from [electrokit][electrokit] in Sweden (since I live in Norway that is convenient.)
 
+# Actual Design
+
+The document *"L298 Dual H-Bridge Motor Driver datasheet"* describes the inputs and outputs of the motor controller. *"fischer-controller"* Omni Graffle document describes a plexiglas board onto which the two motor controllers, arduino and input/output sockets are placed. The inputs and outputs sockets are compatible with fischertechnik plugs. 
+
+They are placed on a smaller 75x125 mm board kept high above main board with 20 mm screws. That leaves room for attaching cables to the fischertechnik sockets from below.
+
+**Part list:**
+
+* Plexiglas 300x200x2 mm
+* 4 screws 3 mm diameter and 20 mm length. Attaching fischertechnik plugs.
+* 12 screws 3 mm diameter. For attaching PCB boards.
+* 2 motor controllers. L298 Dual H-Bridge Motor Driver.
+* 1 arduino UNO
+* 1 10 K potentiometer
+* 1 On / Off button
 
 [motodriver]: http://www.electrokit.com/motordrivare-l298-dubbel-hbrygga.49762 "Dual  full-bridge motor driver"
 [electrokit]: http://www.electrokit.com "Electro:kit"
